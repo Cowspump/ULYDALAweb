@@ -1,0 +1,1000 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROBOCORE - Команда Робототехников</title>
+    <style>
+        /* Сброс стилей и базовые настройки */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Главный экран */
+        .hero {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(ellipse at center, #111 0%, #000 70%);
+            overflow: hidden;
+        }
+
+        /* 3D фон из геометрических фигур */
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            perspective: 1000px;
+        }
+
+        .floating-shape {
+            position: absolute;
+            border: 2px solid rgba(0, 255, 136, 0.2);
+            background: rgba(0, 255, 136, 0.05);
+            backdrop-filter: blur(2px);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape-cube {
+            width: 60px;
+            height: 60px;
+            transform-style: preserve-3d;
+            animation: rotateCube 20s linear infinite;
+        }
+
+        .shape-sphere {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            animation: pulseSphere 4s ease-in-out infinite;
+        }
+
+        .shape-pyramid {
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-bottom: 50px solid rgba(0, 255, 136, 0.2);
+            animation: rotatePyramid 15s linear infinite;
+        }
+
+        .grid-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 255, 136, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 136, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 30s linear infinite;
+            opacity: 0.3;
+        }
+
+        /* Частицы */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: particleMove 10s linear infinite;
+        }
+
+        /* Контент поверх фона */
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 8rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, #00ff88 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+            position: relative;
+        }
+
+        .hero h1::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(0, 255, 136, 0.1) 50%, transparent 100%);
+            z-index: -1;
+            border-radius: 10px;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        /* Стильная кнопка */
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            border-radius: 50px;
+            color: #00ff88;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+            background: rgba(0, 255, 136, 0.2);
+        }
+
+        /* Секция команды */
+        .team-section {
+            padding: 100px 0;
+            position: relative;
+            background: linear-gradient(135deg, #111 0%, #000 50%, #111 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease-out 0.2s forwards;
+        }
+
+        /* Карусель участников команды */
+        .team-carousel {
+            position: relative;
+            height: 600px; /* Увеличиваем высоту для больших карточек */
+            perspective: 1200px; /* Увеличиваем перспективу */
+            margin: 50px 0;
+        }
+
+        .team-member {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 400px; /* Увеличиваем ширину карточек */
+            height: 500px; /* Увеличиваем высоту карточек */
+            transform: translate(-50%, -50%) rotateY(0deg);
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-origin: center;
+            cursor: pointer;
+            perspective: 1200px;
+        }
+
+        .member-card {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #222, #333);
+            border-radius: 20px;
+            padding: 40px; /* Увеличиваем внутренние отступы */
+            text-align: center;
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+        }
+
+        .member-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #00ff88, #0088ff);
+        }
+
+        .member-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 30%, rgba(0, 255, 136, 0.1) 50%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Эффект поворота всей карточки при наведении */
+        .member-card:hover {
+            transform: rotateY(25deg) rotateX(10deg) scale(1.05);
+            box-shadow:
+                0 40px 80px rgba(0, 255, 136, 0.3),
+                0 30px 60px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(0, 255, 136, 0.4);
+        }
+
+        .member-card:hover::after {
+            opacity: 1;
+        }
+
+        .member-photo {
+            width: 140px; /* Увеличиваем размер фото */
+            height: 140px;
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            background: linear-gradient(145deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem; /* Увеличиваем размер иконки */
+            border: 3px solid rgba(0, 255, 136, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        /* Убираем отдельный поворот фото, пусть поворачивается вместе с карточкой */
+        .member-card:hover .member-photo {
+            transform: scale(1.1);
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.5);
+        }
+
+        .member-name {
+            font-size: 2rem; /* Увеличиваем размер имени */
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #00ff88;
+        }
+
+        .member-role {
+            font-size: 1.2rem; /* Увеличиваем размер роли */
+            opacity: 0.7;
+            margin-bottom: 20px;
+        }
+
+        .member-description {
+            font-size: 1rem; /* Увеличиваем размер описания */
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        /* Навигация карусели */
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .carousel-nav:hover {
+            background: rgba(0, 255, 136, 0.2);
+            border-color: #00ff88;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .nav-prev {
+            left: 50px;
+        }
+
+        .nav-next {
+            right: 50px;
+        }
+
+        .nav-arrow {
+            color: #00ff88;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* Секция описания */
+        .description-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #000 0%, #111 50%, #000 100%);
+        }
+
+        .description-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 50px;
+            margin-top: 50px;
+        }
+
+        .description-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            transform: translateY(0);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .description-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .description-card:hover::before {
+            left: 100%;
+        }
+
+        .description-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.1);
+            border-color: rgba(0, 255, 136, 0.3);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #00ff88;
+            transition: transform 0.3s ease;
+        }
+
+        .description-card:hover .card-icon {
+            transform: scale(1.2) rotateY(180deg);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #00ff88;
+        }
+
+        .card-text {
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        /* Футер с контактами */
+        .footer {
+            padding: 80px 0 40px;
+            background: #000;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff88, transparent);
+        }
+
+        .contact-title {
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: #00ff88;
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        .contact-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #fff;
+            transition: all 0.3s ease;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            min-width: 150px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 136, 0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .contact-link:hover::before {
+            transform: translateX(100%);
+        }
+
+        .contact-link:hover {
+            transform: translateY(-5px) scale(1.05);
+            color: #00ff88;
+            box-shadow: 0 15px 30px rgba(0, 255, 136, 0.2);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .contact-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-link:hover .contact-icon {
+            transform: rotateY(360deg) scale(1.2);
+        }
+
+        .contact-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .copyright {
+            opacity: 0.5;
+            font-size: 0.9rem;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Анимации */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            33% {
+                transform: translateY(-20px) rotate(120deg);
+            }
+            66% {
+                transform: translateY(-10px) rotate(240deg);
+            }
+        }
+
+        @keyframes rotateCube {
+            0% {
+                transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+            }
+            100% {
+                transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+            }
+        }
+
+        @keyframes pulseSphere {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        @keyframes rotatePyramid {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes gridMove {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(50px, 50px);
+            }
+        }
+
+        @keyframes particleMove {
+            0% {
+                transform: translateY(100vh) translateX(0px);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes shimmer {
+            0%, 100% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 4rem;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+            }
+
+            .team-member {
+                width: 350px;
+                height: 450px;
+            }
+
+            .carousel-nav {
+                width: 50px;
+                height: 50px;
+            }
+
+            .nav-prev {
+                left: 20px;
+            }
+
+            .nav-next {
+                right: 20px;
+            }
+
+            .contact-links {
+                gap: 30px;
+            }
+
+            .description-grid {
+                gap: 30px;
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .floating-shape {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .team-member {
+                width: 320px;
+                height: 420px;
+            }
+
+            .member-card {
+                padding: 30px;
+            }
+
+            .contact-links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Эффект параллакса для курсора */
+        .parallax-element {
+            transition: transform 0.1s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Главный экран с 3D фоном -->
+    <section class="hero" id="hero">
+        <!-- 3D фон из геометрических фигур -->
+        <div class="hero-background">
+            <!-- Сетка -->
+            <div class="grid-lines"></div>
+
+            <!-- Частицы -->
+            <div class="particles" id="particles"></div>
+
+            <!-- Плавающие фигуры -->
+            <div class="floating-shape shape-cube" style="top: 20%; left: 15%;"></div>
+            <div class="floating-shape shape-sphere" style="top: 60%; left: 80%; animation-delay: -2s;"></div>
+            <div class="floating-shape shape-pyramid" style="top: 30%; left: 70%; animation-delay: -1s;"></div>
+            <div class="floating-shape shape-cube" style="top: 70%; left: 10%; animation-delay: -3s;"></div>
+            <div class="floating-shape shape-sphere" style="top: 10%; left: 85%; animation-delay: -4s;"></div>
+        </div>
+
+        <!-- Контент поверх фона -->
+        <div class="hero-content">
+            <h1>ROBOCORE</h1>
+            <p>Инновационная команда робототехников будущего</p>
+            <a href="#team" class="cta-button">О нашей команде</a>
+        </div>
+    </section>
+
+    <!-- Секция команды -->
+    <section class="team-section" id="team">
+        <div class="container">
+            <h2 class="section-title">Наша Команда</h2>
+
+            <!-- Карусель участников -->
+            <div class="team-carousel">
+                <!-- Участник 1 -->
+                <div class="team-member active" data-index="0">
+                    <div class="member-card parallax-element">
+                        <div class="member-photo">
+    <img src="member_images/A1.JPG" alt="Имя участника" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+</div>
+
+                        <h3 class="member-name">МИНИ МУХА</h3>
+                        <p class="member-role">Капитан команды / Программист</p>
+                        <p class="member-description">Специализируется на разработке ИИ для роботов и алгоритмов машинного обучения. x лет опыта в робототехнике.</p>
+                    </div>
+                </div>
+
+                <!-- Участник 2 -->
+                <div class="team-member" data-index="1">
+                    <div class="member-card parallax-element">
+                        <div class="member-photo">⚙️</div>
+                        <h3 class="member-name">Молдабаев Алихан</h3>
+                        <p class="member-role">разраб</p>
+                        <p class="member-description">По фану сделал этот сайт </p>
+                    </div>
+                </div>
+
+                 <!-- Участник 2 -->
+                <div class="team-member" data-index="2">
+                    <div class="member-card parallax-element">
+                        <div class="member-photo">👩‍💻</div>
+                        <h3 class="member-name">future baddie</h3>
+                        <p class="member-role">just a girl</p>
+                        <p class="member-description">please find my a baddie </p>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+                <!-- Навигация -->
+                <div class="carousel-nav nav-prev">
+                    <span class="nav-arrow">‹</span>
+                </div>
+                <div class="carousel-nav nav-next">
+                    <span class="nav-arrow">›</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция описания -->
+    <section class="description-section" id="about">
+        <div class="container">
+            <h2 class="section-title">О нас</h2>
+
+            <div class="description-grid">
+                <div class="description-card parallax-element">
+                    <div class="card-icon">👨‍🎓</div>
+                    <h3 class="card-title">Кто мы</h3>
+                    <p class="card-text">Команда увлеченных студентов технических специальностей, объединенных общей страстью к робототехнике и инновационным технологиям.</p>
+                </div>
+
+                <div class="description-card parallax-element">
+                    <div class="card-icon">🏆</div>
+                    <h3 class="card-title">Чем занимаемся</h3>
+                    <p class="card-text">Создаем роботов для участия в международных соревнованиях, разрабатываем ИИ-решения и внедряем передовые технологии в робототехнику.</p>
+                </div>
+
+                <div class="description-card parallax-element">
+                    <div class="card-icon">💡</div>
+                    <h3 class="card-title">Наша философия</h3>
+                    <p class="card-text">Мы верим, что робототехника может изменить мир к лучшему. Каждый проект — это шаг к будущему, где технологии служат человечеству.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Футер с контактами -->
+    <footer class="footer" id="contacts">
+        <div class="container">
+            <h2 class="contact-title">Свяжитесь с нами</h2>
+
+            <div class="contact-links">
+                <a href="mailto:info@robocore.team" class="contact-link parallax-element">
+                    <div class="contact-icon">📧</div>
+                    <span class="contact-text">Email</span>
+                </a>
+
+                <a href="https://www.instagram.com/ulydala.ftc?igsh=MTlsY2luZjMyeXZjNg%3D%3D&utm_source=qr" class="contact-link parallax-element" target="_blank">
+                    <div class="contact-icon">📷</div>
+                    <span class="contact-text">Instagram</span>
+                </a>
+
+                <a href="https://t.me/+UhIc9y1Ru7AzMGJi" class="contact-link parallax-element" target="_blank">
+                    <div class="contact-icon">💬</div>
+                    <span class="contact-text">Telegram</span>
+                </a>
+            </div>
+
+            <div class="copyright">
+                © 2025 ULYDALA. Все права защищены.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Класс для создания частиц
+        class ParticleSystem {
+            constructor() {
+                this.particlesContainer = document.getElementById('particles');
+                this.particleCount = 50;
+                this.init();
+            }
+
+            init() {
+                for (let i = 0; i < this.particleCount; i++) {
+                    this.createParticle();
+                }
+            }
+
+            createParticle() {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+
+                // Случайные позиции и задержка
+                const left = Math.random() * 100;
+                const animationDuration = 10 + Math.random() * 20;
+                const animationDelay = Math.random() * 10;
+                const size = 1 + Math.random() * 3;
+
+                particle.style.left = `${left}%`;
+                particle.style.animationDuration = `${animationDuration}s`;
+                particle.style.animationDelay = `${animationDelay}s`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+
+                this.particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Класс для управления каруселью команды (БЕЗ АВТОПРОКРУТКИ)
+        class TeamCarousel {
+            constructor() {
+                this.currentIndex = 0;
+                this.members = document.querySelectorAll('.team-member');
+                this.totalMembers = this.members.length;
+                this.prevBtn = document.querySelector('.nav-prev');
+                this.nextBtn = document.querySelector('.nav-next');
+
+                this.init();
+            }
+
+            init() {
+                this.updateCarousel();
+                this.bindEvents();
+            }
+
+            bindEvents() {
+                this.prevBtn.addEventListener('click', () => this.prevMember());
+                this.nextBtn.addEventListener('click', () => this.nextMember());
+
+                // УБРАНА автоматическая смена карточек
+            }
+
+            prevMember() {
+                this.currentIndex = (this.currentIndex - 1 + this.totalMembers) % this.totalMembers;
+                this.updateCarousel();
+            }
+
+            nextMember() {
+                this.currentIndex = (this.currentIndex + 1) % this.totalMembers;
+                this.updateCarousel();
+            }
+
+            updateCarousel() {
+                this.members.forEach((member, index) => {
+                    member.classList.remove('active');
+
+                    let position = index - this.currentIndex;
+                    if (position < 0) position += this.totalMembers;
+
+                    let transform;
+                    let opacity;
+                    let zIndex;
+
+                    switch (position) {
+                        case 0: // Активная карточка (центр)
+                            transform = 'translate(-50%, -50%) rotateY(0deg) scale(1)';
+                            opacity = 1;
+                            zIndex = 10;
+                            member.classList.add('active');
+                            break;
+                        case 1: // Следующая карточка (справа)
+                            transform = 'translate(-30%, -50%) rotateY(-30deg) scale(0.8)';
+                            opacity = 0.7;
+                            zIndex = 5;
+                            break;
+                        case this.totalMembers - 1: // Предыдущая карточка (слева)
+                            transform = 'translate(-70%, -50%) rotateY(30deg) scale(0.8)';
+                            opacity = 0.7;
+                            zIndex = 5;
+                            break;
+                        default: // Скрытые карточки
+                            transform = 'translate(-50%, -50%) rotateY(0deg) scale(0.5)';
+                            opacity = 0;
+                            zIndex = 1;
+                    }
+
+                    member.style.transform = transform;
+                    member.style.opacity = opacity;
+                    member.style.zIndex = zIndex;
+                });
+            }
+        }
+
+        // Эффект параллакса для курсора
+        class ParallaxEffect {
+            constructor() {
+                this.elements = document.querySelectorAll('.parallax-element');
+                this.init();
+            }
+
+            init() {
+                document.addEventListener('mousemove', (e) => {
+                    const { clientX: x, clientY: y } = e;
+                    const { innerWidth: width, innerHeight: height } = window;
+
+                    const xPos = (x / width - 0.5) * 2;
+                    const yPos = (y / height - 0.5) * 2;
+
+                    this.elements.forEach((element) => {
+                        const rect = element.getBoundingClientRect();
+                        const centerX = rect.left + rect.width / 2;
+                        const centerY = rect.top + rect.height / 2;
+
+                        const distance = Math.sqrt(
+                            Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)
+                        );
+
+                        if (distance < 200) { // Радиус действия эффекта
+                            const intensity = (200 - distance) / 200;
+                            const moveX = xPos * intensity * 10;
+                            const moveY = yPos * intensity * 10;
+
+                            element.style.transform = `translate(${moveX}px, ${moveY}px)`;
+                        } else {
+                            element.style.transform = 'translate(0px, 0px)';
+                        }
+                    });
+                });
+            }
+        }
+
+        // Инициализация всех эффектов
+        document.addEventListener('DOMContentLoaded', () => {
+            new ParticleSystem();
+            new TeamCarousel();
+            new ParallaxEffect();
+        });
+
+        // Плавный скролл для якорных ссылок
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
