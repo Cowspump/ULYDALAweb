@@ -748,6 +748,71 @@
             background: linear-gradient(90deg, transparent, #0088ff, transparent);
         }
 
+        /* Секция полезных материалов */
+        .useful-materials {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #000 0%, #111 50%, #000 100%);
+            position: relative;
+        }
+
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .material-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+            border: 1px solid rgba(0, 136, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .material-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .material-card:hover::before {
+            left: 100%;
+        }
+
+        .material-card:hover {
+            transform: translateY(-10px);
+            border-color: #0088ff;
+            box-shadow: 0 20px 40px rgba(0, 136, 255, 0.2);
+        }
+
+        .material-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #0088ff;
+        }
+
+        .material-title {
+            font-size: 1.5rem;
+            color: #0088ff;
+            margin-bottom: 15px;
+        }
+
+        .material-description {
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
         .community-title {
             font-size: 2.5rem;
             margin-bottom: 40px;
@@ -1284,6 +1349,29 @@
             </a>
         </div>
     </section>
+
+
+    <!-- Секция полезных материалов -->
+    <section class="useful-materials" id="materials">
+        <div class="container">
+            <h2 class="section-title">Полезные материалы</h2>
+            <div class="materials-grid">
+                <a href="https://www.canva.com/design/DAG1-jajcRI/apqKcAUJicgBZN7Bm6zc6g/view?utm_content=DAG1-jajcRI&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hec8b33b9f1"
+                   class="material-card parallax-element" target="_blank">
+                    <div class="material-icon">📚</div>
+                    <h3 class="material-title">Java без границ</h3>
+                    <p class="material-description">Учебное пособие по Java программированию</p>
+                </a>
+                <a href="https://docs.google.com/document/d/18-4VDywHd1940_qq_2JGuuG6hKYU9dj5h1SVlLZwUaQ/edit?usp=sharing"
+                   class="material-card parallax-element" target="_blank">
+                    <div class="material-icon">📖</div>
+                    <h3 class="material-title">Мануал сезона UNEARTHED</h3>
+                    <p class="material-description">Переведенное руководство от команды ULYDALA</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
 
 
 
